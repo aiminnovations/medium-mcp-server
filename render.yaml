@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: medium-mcp-server
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: MEDIUM_CLIENT_ID
+        sync: false
+      - key: MEDIUM_CLIENT_SECRET
+        sync: false
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production

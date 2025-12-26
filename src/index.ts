@@ -4,6 +4,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import MediumAuth from './auth';
 import MediumClient from './client';
+import { createHttpServer } from './transports/sse';
 
 // Load environment variables
 config();
@@ -16,7 +17,7 @@ class MediumMcpServer {
   constructor() {
     // Initialize authentication
     this.auth = new MediumAuth();
-    
+
     // Initialize Medium client
     this.mediumClient = new MediumClient(this.auth);
 
@@ -142,21 +143,46 @@ class MediumMcpServer {
     );
   }
 
-  // Method to start the server
-  async start() {
-    // Authenticate first
-    await this.auth.authenticate();
+  // Get the underlying server for transport connection
+  getServer() {
+    return this.server;
+  }
 
+  // Authenticate with Medium
+  async authenticate() {
+    await this.auth.authenticate();
+  }
+
+  // Start with stdio transport (local development)
+  async startStdio() {
+    await this.authenticate();
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    console.error("🚀 MediumMCP Server Initialized");
+    console.error("🚀 MediumMCP Server Initialized (stdio transport)");
+  }
+
+  // Start with HTTP/SSE transport (remote/Render deployment)
+  async startHttp(port: number) {
+    await this.authenticate();
+    createHttpServer(this.server as any, port);
   }
 }
 
 // Main execution
 async function main() {
   const server = new MediumMcpServer();
-  await server.start();
+
+  const port = process.env.PORT;
+
+  if (port) {
+    // HTTP/SSE transport for remote deployment (Render)
+    console.log(`Starting in HTTP mode on port ${port}`);
+    await server.startHttp(parseInt(port, 10));
+  } else {
+    // Stdio transport for local development
+    console.error("Starting in stdio mode");
+    await server.startStdio();
+  }
 }
 
 main().catch(error => {
