@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "medium-mcp-server": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["dist/index.js"],
+      "env": {
+        "MEDIUM_CLIENT_ID": "${MEDIUM_CLIENT_ID}",
+        "MEDIUM_CLIENT_SECRET": "${MEDIUM_CLIENT_SECRET}"
+      }
+    },
+    "medium-mcp-server-dev": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["ts-node", "src/index.ts"],
+      "env": {
+        "MEDIUM_CLIENT_ID": "${MEDIUM_CLIENT_ID}",
+        "MEDIUM_CLIENT_SECRET": "${MEDIUM_CLIENT_SECRET}"
+      }
+    },
+    "medium-mcp-server-sse": {
+      "type": "sse",
+      "url": "http://localhost:3000/sse",
+      "note": "For SSE transport testing, start server with PORT=3000 first"
+    }
+  }
+}

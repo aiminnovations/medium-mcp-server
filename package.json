@@ -7,7 +7,12 @@
     "start": "node dist/index.js",
     "dev": "ts-node-dev src/index.ts",
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "test:inspector": "npx @modelcontextprotocol/inspector node dist/index.js",
+    "test:inspector:dev": "npx @modelcontextprotocol/inspector npx ts-node src/index.ts",
+    "test:inspector:config": "npx @modelcontextprotocol/inspector --config tests/inspector/mcp-config.json --server medium-mcp-server",
+    "test:inspector:cli": "npx @modelcontextprotocol/inspector --cli node dist/index.js --method tools/list",
+    "test:inspector:tools": "npx @modelcontextprotocol/inspector --cli node dist/index.js --method tools/list"
   },
   "keywords": [
     "medium",
